@@ -1,8 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+	darkMode: 'class',
 	theme: {
-		extend: {},
+		extend: {
+			colors: {
+				light: {
+					bg: '#ffffff',
+					fg: '#1a1a1a',
+					border: '#e5e5e5',
+					card: '#f5f5f5',
+				},
+				dark: {
+					bg: '#050505',
+					fg: '#e5e5e5',
+					border: '#262626',
+					card: '#0a0a0a',
+				},
+			},
+		},
 	},
 	plugins: [
         function({ addUtilities }) {

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ThemeSwitcher from '../components/ThemeSwitcher.astro';
 import { 
     ArrowRight, 
     Landmark, 
@@ -18,7 +19,9 @@ import {
     MessageCircle,
     Building,
     Factory,
-    ShoppingBag
+    ShoppingBag,
+    Menu,
+    X
 } from '@lucide/astro';
 ---
 
@@ -27,31 +30,40 @@ import {
     <div id="mouse-tracker" style="transform: translate3d(281.9px, 80.42px, 0px); opacity: 1;"><div class="tracker-blob"></div></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 rounded-full border border-white/10 bg-[#050505]/90 backdrop-blur-xl shadow-2xl transition-all duration-300">
+    <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 rounded-full border border-white/10 dark:border-white/10 bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl shadow-2xl dark:shadow-2xl transition-all duration-300">
         <div class="px-6 h-14 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="text-[#EB7215]"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></g></svg>
-                <span class="text-lg font-bold tracking-tight text-white">MAADDOO</span>
+                <span class="text-lg font-bold tracking-tight text-black dark:text-white">MAADDOO</span>
             </div>
             
-            <div class="hidden md:flex items-center gap-8 text-sm text-neutral-400 font-medium">
-                <a href="#services" class="hover:text-white transition-colors">
+            <div class="hidden md:flex items-center gap-8 text-sm text-neutral-600 dark:text-neutral-400 font-medium">
+                <a href="#services" class="hover:text-black dark:hover:text-white transition-colors">
                     <span class="lang-en">Our Services</span><span class="lang-am">አገልግሎቶቻችን</span>
                 </a>
-                <a href="#about" class="hover:text-white transition-colors">
+                <a href="#about" class="hover:text-black dark:hover:text-white transition-colors">
                     <span class="lang-en">About Us</span><span class="lang-am">ስለ እኛ</span>
                 </a>
-                <a href="#values" class="hover:text-white transition-colors">
+                <a href="#values" class="hover:text-black dark:hover:text-white transition-colors">
                     <span class="lang-en">Our Values</span><span class="lang-am">እሴቶቻችን</span>
                 </a>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- Theme Switcher -->
+                <ThemeSwitcher />
+
                 <!-- Language Toggle -->
-                <div class="flex items-center bg-white/5 rounded-full p-1 border border-white/10">
-                    <button onclick="setLanguage('en')" data-lang="en" class="lang-btn px-3 py-1 rounded-full text-xs font-semibold transition-all text-neutral-500 hover:text-white">EN</button>
-                    <button onclick="setLanguage('am')" data-lang="am" class="lang-btn px-3 py-1 rounded-full text-xs font-semibold transition-all text-white bg-white/10">አማ</button>
+                <div class="flex items-center bg-black/5 dark:bg-white/5 rounded-full p-1 border border-black/10 dark:border-white/10">
+                    <button onclick="setLanguage('en')" data-lang="en" class="lang-btn px-3 py-1 rounded-full text-xs font-semibold transition-all text-neutral-600 dark:text-neutral-500 hover:text-black dark:hover:text-white">EN</button>
+                    <button onclick="setLanguage('am')" data-lang="am" class="lang-btn px-3 py-1 rounded-full text-xs font-semibold transition-all text-white dark:text-white bg-black/10 dark:bg-white/10">አማ</button>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors" aria-label="Toggle menu">
+                    <Menu class="w-5 h-5 text-neutral-600 dark:text-neutral-400" id="menu-icon" />
+                    <X class="w-5 h-5 text-neutral-600 dark:text-neutral-400 hidden" id="close-icon" />
+                </button>
 
                 <a href="#contact" class="hidden md:flex items-center gap-2 text-xs font-bold bg-[#EB7215] hover:bg-[#d6630e] text-black px-5 py-2.5 rounded-full transition-all z-20">
                     <span class="lang-en">Get a Quote</span><span class="lang-am">ዋጋ ይጠይቁ</span>
@@ -59,6 +71,30 @@ import {
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 md:hidden pointer-events-none">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="menu-backdrop"></div>
+        
+        <!-- Menu Panel -->
+        <div class="absolute top-20 left-4 right-4 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl translate-y-[-20px] opacity-0 transition-all duration-300" id="menu-panel">
+            <div class="p-6 space-y-4">
+                <a href="#services" class="mobile-menu-link block px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-medium transition-colors">
+                    <span class="lang-en">Our Services</span><span class="lang-am">አገልግሎቶቻችን</span>
+                </a>
+                <a href="#about" class="mobile-menu-link block px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-medium transition-colors">
+                    <span class="lang-en">About Us</span><span class="lang-am">ስለ እኛ</span>
+                </a>
+                <a href="#values" class="mobile-menu-link block px-4 py-3 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-medium transition-colors">
+                    <span class="lang-en">Our Values</span><span class="lang-am">እሴቶቻችን</span>
+                </a>
+                <a href="#contact" class="mobile-menu-link block px-4 py-3 rounded-lg bg-[#EB7215] hover:bg-[#d6630e] text-black font-semibold text-center transition-colors">
+                    <span class="lang-en">Get a Quote</span><span class="lang-am">ዋጋ ይጠይቁ</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
@@ -75,12 +111,12 @@ import {
                         <span class="text-xs font-bold text-[#EB7215] tracking-wide uppercase lang-am">ከግዢ እስከ ስርጭት</span>
                     </div>
 
-                    <h1 class="text-5xl lg:text-7xl tracking-tighter text-white mb-6 leading-[1.1] font-semibold">
-                        <span class="lang-en">Your Strategic <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 via-neutral-400 to-neutral-600">Business Bridge.</span></span>
-                        <span class="lang-am">የንግድዎ <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 via-neutral-400 to-neutral-600">ስትራቴጂያዊ አጋር።</span></span>
+                    <h1 class="text-5xl lg:text-7xl tracking-tighter text-black dark:text-white mb-6 leading-[1.1] font-semibold">
+                        <span class="lang-en">Your Strategic <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neutral-700 via-neutral-800 to-neutral-900 dark:from-neutral-200 dark:via-neutral-400 dark:to-neutral-600">Business Bridge.</span></span>
+                        <span class="lang-am">የንግድዎ <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neutral-700 via-neutral-800 to-neutral-900 dark:from-neutral-200 dark:via-neutral-400 dark:to-neutral-600">ስትራቴጂያዊ አጋር።</span></span>
                     </h1>
 
-                    <p class="max-w-xl text-lg text-neutral-400 leading-relaxed mb-10 font-light mx-auto lg:mx-0">
+                    <p class="max-w-xl text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed mb-10 font-light mx-auto lg:mx-0">
                         <span class="lang-en">Negotiation to Success. We navigate unorganized markets, facilitate complex negotiations, and provide seamless supply chain solutions for Government, Corporate, and Individuals.</span>
                         <span class="lang-am">MAADDOO በገበያው ውስጥ ያሉ ክፍተቶችን በመሙላት፣ ግብይቶችን በማሳለጥ እና አስተማማኝ የስርጭት ሰንሰለት በመዘርጋት የተቀላጠፈ አገልግሎት ይሰጣል።</span>
                     </p>
@@ -90,45 +126,45 @@ import {
                             <span class="lang-en">Consult with Us</span><span class="lang-am">ያማክሩን</span>
                             <ArrowRight class="group-hover:translate-x-1 transition-transform" />
                         </button>
-                        <button class="px-8 py-4 bg-transparent border border-neutral-700 hover:border-white text-white font-medium text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group whitespace-nowrap">
+                        <button class="px-8 py-4 bg-transparent border border-neutral-300 dark:border-neutral-700 hover:border-[#EB7215] dark:hover:border-white text-black dark:text-white font-medium text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group whitespace-nowrap">
                             <span class="lang-en">Explore Services</span><span class="lang-am">አገልግሎቶችን ይወቁ</span>
                         </button>
                     </div>
 
                     <!-- Trust Bar -->
-                    <div class="flex flex-wrap lg:justify-start gap-4 w-full border-white/5 border-t pt-8 gap-x-4 gap-y-4 justify-center">
+                    <div class="flex flex-wrap lg:justify-start gap-4 w-full border-black/5 dark:border-white/5 border-t pt-8 gap-x-4 gap-y-4 justify-center">
     <!-- G2B Pill -->
-    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
+    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-black/[0.02] dark:bg-white/[0.03] border border-black/[0.08] dark:border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
         <div class="absolute inset-0 bg-gradient-to-r from-[#EB7215]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative w-9 h-9 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
+        <div class="relative w-9 h-9 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center text-neutral-600 dark:text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
             <Landmark width={16} height={16} />
         </div>
         <div class="relative flex flex-col justify-center">
-            <span class="text-xs font-semibold text-white leading-none mb-0.5">G2B</span>
+            <span class="text-xs font-semibold text-black dark:text-white leading-none mb-0.5">G2B</span>
             <span class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider group-hover:text-[#EB7215] transition-colors">Government</span>
         </div>
     </div>
 
     <!-- B2B Pill -->
-    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
+    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-black/[0.02] dark:bg-white/[0.03] border border-black/[0.08] dark:border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
         <div class="absolute inset-0 bg-gradient-to-r from-[#EB7215]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative w-9 h-9 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
+        <div class="relative w-9 h-9 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center text-neutral-600 dark:text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
             <Briefcase width={16} height={16} />
         </div>
         <div class="relative flex flex-col justify-center">
-            <span class="text-xs font-semibold text-white leading-none mb-0.5">B2B</span>
+            <span class="text-xs font-semibold text-black dark:text-white leading-none mb-0.5">B2B</span>
             <span class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider group-hover:text-[#EB7215] transition-colors">Corporate</span>
         </div>
     </div>
 
     <!-- B2C Pill -->
-    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
+    <div class="group relative flex items-center gap-3 pl-1.5 pr-5 py-1.5 rounded-full bg-black/[0.02] dark:bg-white/[0.03] border border-black/[0.08] dark:border-white/[0.08] hover:border-[#EB7215]/40 hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-300 cursor-default overflow-hidden backdrop-blur-sm">
         <div class="absolute inset-0 bg-gradient-to-r from-[#EB7215]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div class="relative w-9 h-9 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
+        <div class="relative w-9 h-9 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center text-neutral-600 dark:text-neutral-300 group-hover:bg-[#EB7215] group-hover:text-white group-hover:border-[#EB7215] transition-all duration-300 shadow-inner">
             <Users width={16} height={16} />
         </div>
         <div class="relative flex flex-col justify-center">
-            <span class="text-xs font-semibold text-white leading-none mb-0.5">B2C</span>
+            <span class="text-xs font-semibold text-black dark:text-white leading-none mb-0.5">B2C</span>
             <span class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider group-hover:text-[#EB7215] transition-colors">Individuals</span>
         </div>
     </div>
@@ -140,29 +176,29 @@ import {
                      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#EB7215]/20 via-transparent to-transparent blur-[80px] pointer-events-none"></div>
 
                      <div class="relative w-full max-w-lg aspect-[4/3] transform-style-preserve-3d rotate-x-3 group-hover:rotate-0 transition-transform duration-700 ease-out">
-                        <div class="absolute inset-0 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-neutral-900">
+                        <div class="absolute inset-0 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl bg-neutral-100 dark:bg-neutral-900">
                             <!-- Abstract Supply Chain Visual -->
                             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=2160&amp;q=80" alt="Business Bridge" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#dfdddce5] dark:from-[#08080877] via-transparent to-transparent"></div>
                             
                             <div class="absolute bottom-0 left-0 right-0 p-8">
-                                <h3 class="text-2xl text-white font-semibold mb-2 lang-en">Closing the Gap</h3>
-                                <h3 class="text-2xl text-white font-semibold mb-2 lang-am">የገበያ ክፍተትን መሙላት</h3>
-                                <p class="text-sm text-neutral-400 lang-en">Connecting producers, buyers, and sellers seamlessly.</p>
-                                <p class="text-sm text-neutral-400 lang-am">አምራቾችን፣ ገዢዎችን እና ሻጮችን ያለችግር እናገናኛለን።</p>
+                                <h3 class="text-2xl text-black dark:text-white font-semibold mb-2 lang-en">Closing the Gap</h3>
+                                <h3 class="text-2xl text-black dark:text-white font-semibold mb-2 lang-am">የገበያ ክፍተትን መሙላት</h3>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400 lang-en">Connecting producers, buyers, and sellers seamlessly.</p>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400 lang-am">አምራቾችን፣ ገዢዎችን እና ሻጮችን ያለችግር እናገናኛለን።</p>
                             </div>
                         </div>
 
                         <!-- Badge -->
-                        <div class="absolute -top-6 -right-6 bg-neutral-900/90 border border-white/10 p-4 rounded-xl backdrop-blur-xl shadow-xl translate-z-20 animate-[float_4s_ease-in-out_infinite]">
+                        <div class="absolute -top-6 -right-6 bg-white/90 dark:bg-neutral-900/90 border border-black/10 dark:border-white/10 p-4 rounded-xl backdrop-blur-xl shadow-xl translate-z-20 animate-[float_4s_ease-in-out_infinite]">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-[#EB7215]/20 flex items-center justify-center text-[#EB7215]">
                                     <Handshake width={20} />
                                 </div>
                                 <div>
                                     <div class="text-[10px] uppercase text-neutral-500 font-bold tracking-wider lang-en">Status</div>
-                                    <div class="text-sm text-white font-medium lang-en">Deals Secured</div>
-                                    <div class="text-sm text-white font-medium lang-am">ውሎች ተፈጽመዋል</div>
+                                    <div class="text-sm text-black dark:text-white font-medium lang-en">Deals Secured</div>
+                                    <div class="text-sm text-black dark:text-white font-medium lang-am">ውሎች ተፈጽመዋል</div>
                                 </div>
                             </div>
                         </div>
@@ -173,14 +209,14 @@ import {
     </section>
 
     <!-- Core Services Grid -->
-    <section id="services" class="py-24 bg-neutral-950 border-y border-white/5 relative z-20">
+    <section id="services" class="py-24 bg-neutral-50 dark:bg-neutral-950 border-y border-black/5 dark:border-white/5 relative z-20">
         <div class="max-w-7xl mx-auto px-6 -multi">
             <div class="text-center mb-16 max-w-2xl mx-auto">
                 <span class="text-[#EB7215] text-xs font-bold tracking-[0.2em] uppercase mb-4 block lang-en">Our Core Services</span>
                 <span class="text-[#EB7215] text-xs font-bold tracking-[0.2em] uppercase mb-4 block lang-am">ዋና ዋና አገልግሎቶቻችን</span>
                 
-                <h2 class="text-3xl lg:text-4xl tracking-tight text-white font-semibold mb-4 lang-en">Comprehensive Business Solutions</h2>
-                <h2 class="text-3xl lg:text-4xl tracking-tight text-white font-semibold mb-4 lang-am">አጠቃላይ የንግድ መፍትሄዎች</h2>
+                <h2 class="text-3xl lg:text-4xl tracking-tight text-black dark:text-white font-semibold mb-4 lang-en">Comprehensive Business Solutions</h2>
+                <h2 class="text-3xl lg:text-4xl tracking-tight text-black dark:text-white font-semibold mb-4 lang-am">አጠቃላይ የንግድ መፍትሄዎች</h2>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -189,14 +225,14 @@ import {
                     <div class="w-12 h-12 bg-[#EB7215]/10 rounded-lg flex items-center justify-center text-[#EB7215] mb-6 group-hover:bg-[#EB7215] group-hover:text-black transition-colors">
                         <Boxes width={24} />
                     </div>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-en">Procurement &amp; Brokerage</h3>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-am">የግዢ እና የአገናኝ አገልግሎት</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-en">Procurement &amp; Brokerage</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-am">የግዢ እና የአገናኝ አገልግሎት</h3>
                     
-                    <div class="space-y-4 text-neutral-400 text-sm leading-relaxed">
+                    <div class="space-y-4 text-neutral-700 dark:text-neutral-400 text-sm leading-relaxed">
                         <p class="lang-en">Specialized solutions for government (G2B), corporate (B2B), and individuals (B2C). We source high-quality materials ensuring cost-effectiveness and compliance.</p>
                         <p class="lang-am">ለመንግስት፣ ለድርጅቶች እና ለግለሰቦች የተዘጋጀ አገልግሎት። ተቋማት የሚፈልጓቸውን ግብዓቶች በጥራት እና በተመጣጣኝ ዋጋ እንዲያገኙ እናደርጋለን።</p>
                         
-                        <ul class="space-y-2 mt-4 pt-4 border-t border-white/5">
+                        <ul class="space-y-2 mt-4 pt-4 border-t border-black/5 dark:border-white/5">
                             <li class="flex items-center gap-2"><Check class="text-[#EB7215]" /> <span class="lang-en">G2B &amp; B2B Sourcing</span><span class="lang-am">G2B &amp; B2B ግብዓት አቅርቦት</span></li>
                             <li class="flex items-center gap-2"><Check class="text-[#EB7215]" /> <span class="lang-en">Trusted Intermediary</span><span class="lang-am">ታማኝ የአገናኝ አገልግሎት</span></li>
                         </ul>
@@ -208,14 +244,14 @@ import {
                     <div class="w-12 h-12 bg-[#EB7215]/10 rounded-lg flex items-center justify-center text-[#EB7215] mb-6 group-hover:bg-[#EB7215] group-hover:text-black transition-colors">
                         <Megaphone width={24} />
                     </div>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-en">Sales Agency &amp; Distribution</h3>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-am">የሽያጭ እና የስርጭት ውክልና</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-en">Sales Agency &amp; Distribution</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-am">የሽያጭ እና የስርጭት ውክልና</h3>
                     
-                    <div class="space-y-4 text-neutral-400 text-sm leading-relaxed">
+                    <div class="space-y-4 text-neutral-700 dark:text-neutral-400 text-sm leading-relaxed">
                         <p class="lang-en">We act as a dedicated agent for manufacturers and importers. We identify the right buyers, close deals, and ensure efficient market distribution.</p>
-                        <p class="lang-am">ለአምራቾች እና አስመጪዎች እንደ ወኪል በመሆን ምርቶቻቸውን ለገበያ እናቀርባለን። ምርትዎን ለትክክለኛው ገዢ የማስተዋወቅ እና የመሸጥ ኃላፊነት እንወስዳለን።</p>
+                        <p class="lang-am">ለአምራቾች እና አስመጪዎች እንደ ወኪል በመሆን ምርቶቻቸውን ለገበያ እናቀርባለን። ምርትዎን ለትክክለኛው ገዢ የማስተዋወቅ እና የመሸጥ ኃላፊነት እንወስዳለን।</p>
                         
-                        <ul class="space-y-2 mt-4 pt-4 border-t border-white/5">
+                        <ul class="space-y-2 mt-4 pt-4 border-t border-black/5 dark:border-white/5">
                             <li class="flex items-center gap-2"><Check class="text-[#EB7215]" /> <span class="lang-en">Representation &amp; Growth</span><span class="lang-am">ውክልና እና የገበያ ዕድገት</span></li>
                             <li class="flex items-center gap-2"><Check class="text-[#EB7215]" /> <span class="lang-en">Network Distribution</span><span class="lang-am">የስርጭት መረብ</span></li>
                         </ul>
@@ -227,10 +263,10 @@ import {
                     <div class="w-12 h-12 bg-[#EB7215]/10 rounded-lg flex items-center justify-center text-[#EB7215] mb-6 group-hover:bg-[#EB7215] group-hover:text-black transition-colors">
                         <Globe width={24} />
                     </div>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-en">Sourcing &amp; Strategic Negotiation</h3>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-am">የገበያ ክፍተቶችን መሙላት (Sourcing)</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-en">Sourcing &amp; Strategic Negotiation</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-am">የገበያ ክፍተቶችን መሙላት (Sourcing)</h3>
                     
-                    <div class="space-y-4 text-neutral-400 text-sm leading-relaxed">
+                    <div class="space-y-4 text-neutral-700 dark:text-neutral-400 text-sm leading-relaxed">
                         <p class="lang-en">"Fulfilling the Gap." In unorganized markets, we utilize expertise to source hard-to-find products and negotiate the best possible terms.</p>
                         <p class="lang-am">ያልተደራጁ ገበያዎች ውስጥ ትክክለኛውን ምርት በመፈለግ እና ውጤታማ ድርድር በማድረግ በንግድ ሂደት ውስጥ የሚታዩ ክፍተቶችን እንሞላለን።</p>
                     </div>
@@ -241,10 +277,10 @@ import {
                     <div class="w-12 h-12 bg-[#EB7215]/10 rounded-lg flex items-center justify-center text-[#EB7215] mb-6 group-hover:bg-[#EB7215] group-hover:text-black transition-colors">
                         <Truck width={24} />
                     </div>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-en">Order Fulfillment &amp; Delivery</h3>
-                    <h3 class="text-xl text-white font-semibold mb-3 lang-am">የተቀናጀ ትዕዛዝ እና ዴሊቨሪ</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-en">Order Fulfillment &amp; Delivery</h3>
+                    <h3 class="text-xl text-black dark:text-white font-semibold mb-3 lang-am">የተቀናጀ ትዕዛዝ እና ዴሊቨሪ</h3>
                     
-                    <div class="space-y-4 text-neutral-400 text-sm leading-relaxed">
+                    <div class="space-y-4 text-neutral-700 dark:text-neutral-400 text-sm leading-relaxed">
                         <p class="lang-en">End-to-end service. From taking the initial order to final delivery, we ensure goods reach clients safely, on time, and exactly as requested.</p>
                         <p class="lang-am">ከደንበኞቻችን ትዕዛዞችን እንቀበላለን፤ እንዲሁም ምርትና አገልግሎቶችን በታማኝነት እና በፍጥነት ደንበኛው ደጃፍ ድረስ እናደርሳለን።</p>
                     </div>
@@ -259,60 +295,60 @@ import {
             <div class="grid lg:grid-cols-2 gap-16">
                 <!-- About Text -->
                 <div class="">
-                    <h2 class="text-3xl text-white font-semibold mb-6 lang-en">Who is MAADDOO?</h2>
-                    <h2 class="text-3xl text-white font-semibold mb-6 lang-am">MAADDOO ማነው?</h2>
+                    <h2 class="text-3xl text-black dark:text-white font-semibold mb-6 lang-en">Who is MAADDOO?</h2>
+                    <h2 class="text-3xl text-black dark:text-white font-semibold mb-6 lang-am">MAADDOO ማነው?</h2>
                     
-                    <div class="text-neutral-400 leading-relaxed space-y-6">
+                    <div class="text-neutral-700 dark:text-neutral-400 leading-relaxed space-y-6">
                         <p class="lang-en">MAADDOO is a versatile agency founded on the principle of making trade accessible and organized. In a market where connections are everything, we serve as the vital link that ensures business keeps moving.</p>
                         <p class="lang-en">Whether you are a manufacturer, importer, wholesaler looking for a market, or a government office and individual looking for a reliable supplier, we are here to bridge the gap.</p>
                         
                         <p class="lang-am">MAADDOO በገበያው ውስጥ ያሉ ክፍተቶችን በመሙላት፣ ግብይቶችን በማሳለጥ እና አስተማማኝ የስርጭት ሰንሰለት በመዘርጋት የተቀላጠፈ አገልግሎት ይሰጣል። ከመንግስት እስከ ግለሰብ ያለውን የግብይት ሰንሰለት በማገናኘት የንግድ እንቅፋቶችን እናስወግዳለን።</p>
                     </div>
 
-                    <div class="mt-10 p-6 bg-white/5 rounded-xl border border-white/10">
+                    <div class="mt-10 p-6 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10">
                         <h4 class="text-[#EB7215] font-semibold mb-2 lang-en">Our Vision</h4>
                         <h4 class="text-[#EB7215] font-semibold mb-2 lang-am">ራዕይ</h4>
-                        <p class="text-sm text-white lang-en">To be the most trusted and innovative business bridge in Ethiopia and beyond, transforming unorganized markets into structured opportunities.</p>
-                        <p class="text-sm text-white lang-am">በኢትዮጵያ እና ከዚያም ባሻገር እጅግ በጣም ታማኝ እና ፈጠራ ያለው የንግድ ድልድይ መሆን፣ ያልተደራጁ ገበያዎችን ወደ ተደራጁ እድሎች መቀየር።</p>
+                        <p class="text-sm text-black dark:text-white lang-en">To be the most trusted and innovative business bridge in Ethiopia and beyond, transforming unorganized markets into structured opportunities.</p>
+                        <p class="text-sm text-black dark:text-white lang-am">በኢትዮጵያ እና ከዚያም ባሻገር እጅግ በጣም ታማኝ እና ፈጠራ ያለው የንግድ ድልድይ መሆን፣ ያልተደራጁ ገበያዎችን ወደ ተደራጁ እድሎች መቀየር።</p>
                     </div>
                 </div>
 
                 <!-- Values Grid (Why Us) -->
                 <div id="values" class="">
-                    <h3 class="text-2xl text-white font-semibold mb-8 lang-en">Our Core Values</h3>
-                    <h3 class="text-2xl text-white font-semibold mb-8 lang-am">እሴቶቻችን እና መርሆዎቻችን</h3>
+                    <h3 class="text-2xl text-black dark:text-white font-semibold mb-8 lang-en">Our Core Values</h3>
+                    <h3 class="text-2xl text-black dark:text-white font-semibold mb-8 lang-am">እሴቶቻችን እና መርሆዎቻችን</h3>
 
                     <div class="grid gap-4">
                         <!-- Value 1 -->
-                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-900 border border-white/5 hover:border-[#EB7215]/30 transition-colors">
+                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-black/5 dark:border-white/5 hover:border-[#EB7215]/30 transition-colors">
                             <ShieldCheck class="text-[#EB7215] text-2xl flex-shrink-0 mt-1" />
                             <div class="">
-                                <h4 class="text-white font-medium lang-en">Integrity</h4>
-                                <h4 class="text-white font-medium lang-am">ታማኝነት</h4>
-                                <p class="text-sm text-neutral-500 mt-1 lang-en">Transparent operations that protect the interests of all parties.</p>
-                                <p class="text-sm text-neutral-500 mt-1 lang-am">ግልጽነት እና ፕሮፌሽናልነት መለያችን ነው። የሁሉንም ወገኖች ጥቅም እናስከብራለን።</p>
+                                <h4 class="text-black dark:text-white font-medium lang-en">Integrity</h4>
+                                <h4 class="text-black dark:text-white font-medium lang-am">ታማኝነት</h4>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-en">Transparent operations that protect the interests of all parties.</p>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-am">ግልጽነት እና ፕሮፌሽናልነት መለያችን ነው። የሁሉንም ወገኖች ጥቅም እናስከብራለን።</p>
                             </div>
                         </div>
 
                         <!-- Value 2 -->
-                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-900 border border-white/5 hover:border-[#EB7215]/30 transition-colors">
+                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-black/5 dark:border-white/5 hover:border-[#EB7215]/30 transition-colors">
                             <Zap class="text-[#EB7215] text-2xl flex-shrink-0 mt-1" />
                             <div>
-                                <h4 class="text-white font-medium lang-en">Agility</h4>
-                                <h4 class="text-white font-medium lang-am">ቅልጥፍና</h4>
-                                <p class="text-sm text-neutral-500 mt-1 lang-en">Navigating complex and blocked markets with speed and resourcefulness.</p>
-                                <p class="text-sm text-neutral-500 mt-1 lang-am">በተዘጉ እና ባልተደራጁ ገበያዎች ውስጥ ፈጣን መፍትሄዎችን እናመጣለን።</p>
+                                <h4 class="text-black dark:text-white font-medium lang-en">Agility</h4>
+                                <h4 class="text-black dark:text-white font-medium lang-am">ቅልጥፍና</h4>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-en">Navigating complex and blocked markets with speed and resourcefulness.</p>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-am">በተዘጉ እና ባልተደራጁ ገበያዎች ውስጥ ፈጣን መፍትሄዎችን እናመጣለን።</p>
                             </div>
                         </div>
 
                         <!-- Value 3 -->
-                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-900 border border-white/5 hover:border-[#EB7215]/30 transition-colors">
+                        <div class="flex gap-4 items-start p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-black/5 dark:border-white/5 hover:border-[#EB7215]/30 transition-colors">
                             <Star class="text-[#EB7215] text-2xl flex-shrink-0 mt-1" />
                             <div>
-                                <h4 class="text-white font-medium lang-en">Excellence</h4>
-                                <h4 class="text-white font-medium lang-am">ላቀ አገልግሎት</h4>
-                                <p class="text-sm text-neutral-500 mt-1 lang-en">Delivering high-standard services from the first "hello" to the final delivery.</p>
-                                <p class="text-sm text-neutral-500 mt-1 lang-am">ከመጀመሪያው ግንኙነት እስከ መጨረሻው ርክክብ ድረስ ከፍተኛ ጥራት ያለው አገልግሎት።</p>
+                                <h4 class="text-black dark:text-white font-medium lang-en">Excellence</h4>
+                                <h4 class="text-black dark:text-white font-medium lang-am">ላቀ አገልግሎት</h4>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-en">Delivering high-standard services from the first "hello" to the final delivery.</p>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-500 mt-1 lang-am">ከመጀመሪያው ግንኙነት እስከ መጨረሻው ርክክብ ድረስ ከፍተኛ ጥራት ያለው አገልግሎት።</p>
                             </div>
                         </div>
                     </div>
@@ -322,7 +358,7 @@ import {
     </section>
 
     <!-- Marquee Section (Brand Trust) -->
-    <section class="py-20 bg-[#050505] border-t border-white/5 overflow-hidden">
+    <section class="py-20 bg-neutral-50 dark:bg-[#050505] border-t border-black/5 dark:border-white/5 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 mb-12 text-center">
             <h4 class="text-sm text-neutral-500 font-medium lang-en">TRUSTED ACROSS SECTORS</h4>
             <h4 class="text-sm text-neutral-500 font-medium lang-am">በተለያዩ ዘርፎች የታመነ</h4>
@@ -336,7 +372,7 @@ import {
                 Building, Factory, ShoppingBag, Truck, Briefcase, Globe,
                 Building, Factory, ShoppingBag, Truck, Briefcase, Globe
                ].map((Icon) => (
-                    <div class="w-[120px] h-[80px] flex-shrink-0 flex items-center justify-center border border-white/5 rounded-lg bg-white/[0.02] text-neutral-600">
+                    <div class="w-[120px] h-[80px] flex-shrink-0 flex items-center justify-center border border-black/5 dark:border-white/5 rounded-lg bg-black/[0.02] dark:bg-white/[0.02] text-neutral-600 dark:text-neutral-600">
                         <Icon size={32} />
                     </div>
                 ))
@@ -349,12 +385,12 @@ import {
         <div class="absolute inset-0 bg-[#EB7215]/[0.02]"></div>
         <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
             
-            <h2 class="text-4xl md:text-5xl tracking-tighter text-white mb-6 font-semibold">
+            <h2 class="text-4xl md:text-5xl tracking-tighter text-black dark:text-white mb-6 font-semibold">
                 <span class="lang-en">Ready to Grow Your <span class="text-[#EB7215]">Business?</span></span>
                 <span class="lang-am">ንግድዎን ለማሳደግ <span class="text-[#EB7215]">ዝግጁ ኖት?</span></span>
             </h2>
             
-            <p class="text-neutral-400 mb-10 max-w-xl mx-auto">
+            <p class="text-neutral-600 dark:text-neutral-400 mb-10 max-w-xl mx-auto">
                 <span class="lang-en">At MAADDOO, your goal is our mission. Let us handle the complexities of the market while you focus on your core business.</span>
                 <span class="lang-am">የገበያውን ውስብስብነት እኛ እንወጣዋለን፤ እርስዎ በዋና ሥራዎ ላይ ያተኩሩ።</span>
             </p>
@@ -371,11 +407,11 @@ import {
             </div>
 
             <!-- Footer -->
-            <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="border-t border-black/5 dark:border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-2">
-                    <span class="text-white font-bold tracking-tight">MAADDOO</span>
+                    <span class="text-black dark:text-white font-bold tracking-tight">MAADDOO</span>
                 </div>
-                <div class="text-xs text-neutral-600">
+                <div class="text-xs text-neutral-500 dark:text-neutral-600">
                     © 2026 MAADDOO Networking. All rights reserved.
                 </div>
             </div>
@@ -386,6 +422,59 @@ import {
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuBackdrop = document.getElementById('menu-backdrop');
+        const menuPanel = document.getElementById('menu-panel');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        const menuLinks = document.querySelectorAll('.mobile-menu-link');
+        
+        let isMenuOpen = false;
+        
+        function openMenu() {
+            isMenuOpen = true;
+            mobileMenu?.classList.remove('pointer-events-none');
+            mobileMenu?.classList.add('pointer-events-auto');
+            menuBackdrop?.classList.remove('opacity-0');
+            menuBackdrop?.classList.add('opacity-100');
+            menuPanel?.classList.remove('translate-y-[-20px]', 'opacity-0');
+            menuPanel?.classList.add('translate-y-0', 'opacity-100');
+            menuIcon?.classList.add('hidden');
+            closeIcon?.classList.remove('hidden');
+        }
+        
+        function closeMenu() {
+            isMenuOpen = false;
+            menuBackdrop?.classList.add('opacity-0');
+            menuBackdrop?.classList.remove('opacity-100');
+            menuPanel?.classList.add('translate-y-[-20px]', 'opacity-0');
+            menuPanel?.classList.remove('translate-y-0', 'opacity-100');
+            menuIcon?.classList.remove('hidden');
+            closeIcon?.classList.add('hidden');
+            setTimeout(() => {
+                mobileMenu?.classList.add('pointer-events-none');
+                mobileMenu?.classList.remove('pointer-events-auto');
+            }, 300);
+        }
+        
+        menuBtn?.addEventListener('click', () => {
+            if (isMenuOpen) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+        
+        menuBackdrop?.addEventListener('click', closeMenu);
+        
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                closeMenu();
+            });
+        });
+        
         // Mouse Tracker
         const tracker = document.getElementById('mouse-tracker');
         if (tracker) {
